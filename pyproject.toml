@@ -108,6 +108,9 @@ Homepage = "https://github.com/sio2project"
 [project.scripts]
 oioioi-create-config = "oioioi.deployment.create_config:main"
 
+[tool.uv]
+exclude-newer = "P7D"
+
 [tool.setuptools]
 packages = {find = {exclude = ["ez_setup"]}}
 include-package-data = true
