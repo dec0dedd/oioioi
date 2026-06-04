@@ -190,9 +190,10 @@ class RankingController(RegisteredSubclassesBase, ObjectWithMixins):
         fake_req = RequestFactory().get("/?page=" + str(page))
         fake_req.user = AnonymousUser()
         fake_req.contest = self.contest
-        
-        # For django-pagination-py3, page is a property returning an int
-        fake_req.page = page
+        # django-pagination-py3 reads request.page as a property returning an int.
+        # We create a per-call subclass so we can override the property cleanly
+        # without mutating the shared WSGIRequest class (which the middleware
+        # already patches at the class level).
         page_number = page
         fake_req.__class__ = type(
             "PaginatedRequest",
