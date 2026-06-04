@@ -190,9 +190,15 @@ class RankingController(RegisteredSubclassesBase, ObjectWithMixins):
         fake_req = RequestFactory().get("/?page=" + str(page))
         fake_req.user = AnonymousUser()
         fake_req.contest = self.contest
-        # This is required by dj-pagination
-        # Normally they monkey patch this function in their middleware
-        fake_req.page = lambda _: page
+        
+        # For django-pagination-py3, page is a property returning an int
+        fake_req.page = page
+        page_number = page
+        fake_req.__class__ = type(
+            "PaginatedRequest",
+            (type(fake_req),),
+            {"page": property(lambda self: page_number)},
+        )
         return fake_req
 
     def _render_ranking_page(self, key, data, page):
